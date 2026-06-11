@@ -15,7 +15,7 @@ export default class IndexItem extends Component {
       this.onUpdate = this.onUpdate.bind(this);
       this.handleAdd = this.handleAdd.bind(this);
     }
-    componentWillMount(){
+    componentDidMount(){
       this.fillData();
     }
 

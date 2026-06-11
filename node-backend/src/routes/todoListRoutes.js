@@ -6,22 +6,24 @@ var router = express.Router();
 var TodoList = require('../models/TodoList');
 
 // Get Specific
-router.route('/:id').get(function (req, res) {
-  var id = req.params.id;
-  TodoList.findById(id, function (err, item){
-      res.json(item);
-  });
+router.route('/:id').get(async function (req, res) {
+  try {
+    var item = await TodoList.findById(req.params.id);
+    res.json(item);
+  } catch (err) {
+    res.status(400).json(err);
+  }
 });
 
 // Get All Items
-router.route('/').get(function (req, res) {
-  TodoList.find(function (err, items){
-    if(err){
-      console.log(err);
-    } else {
-      res.json(items);
-    }
-  });
+router.route('/').get(async function (req, res) {
+  try {
+    var items = await TodoList.find();
+    res.json(items);
+  } catch (err) {
+    console.log(err);
+    res.status(400).json(err);
+  }
 });
 
 // Add item
@@ -37,30 +39,28 @@ router.route('/add').post(function (req, res) {
 });
 
 //  Update Specific
-router.route('/update/:id').post(function (req, res) {
-  TodoList.findById(req.params.id, function(err, item) {
+router.route('/update/:id').post(async function (req, res) {
+  try {
+    var item = await TodoList.findById(req.params.id);
     if (!item)
-      return next(new Error('Could not load Document'));
-    else {
-      item.desc = req.body.desc;
+      return res.status(404).send('Could not load Document');
 
-      item.save().then(item => {
-          res.json('Updated');
-      })
-      .catch(err => {
-            res.status(400).send("unable to update the database");
-      });
-    }
-  });
+    item.desc = req.body.desc;
+    await item.save();
+    res.json('Updated');
+  } catch (err) {
+    res.status(400).send("unable to update the database");
+  }
 });
 
 // Delete Specific
-router.route('/delete/:id').get(function (req, res) {
-  TodoList.findByIdAndRemove({_id: req.params.id},
-       function(err, item){
-        if(err) res.json(err);
-        else res.json('Deleted');
-    });
+router.route('/delete/:id').get(async function (req, res) {
+  try {
+    await TodoList.findByIdAndDelete(req.params.id);
+    res.json('Deleted');
+  } catch (err) {
+    res.json(err);
+  }
 });
 
 module.exports = router;
