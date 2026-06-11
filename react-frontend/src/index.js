@@ -1,8 +1,8 @@
 //index.js
 
 import React from 'react';
-import ReactDOM from 'react-dom';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
+import { createRoot } from 'react-dom/client';
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
 import {Header} from "./components/Header";
 
@@ -12,7 +12,8 @@ import UpdateTodo from './components/UpdateTodo';
 
 import './index.css';
 
-ReactDOM.render(
+const root = createRoot(document.getElementById('root'));
+root.render(
   <div className="container">
     <div className="row">
       <div className="col-xs-12">
@@ -21,14 +22,12 @@ ReactDOM.render(
     </div>
     <div>
       <Router>
-      <div>
+      <Switch>
       <Route path='/add' component={AddTodo} />
       <Route exact path='/' component={ListTodo} />
       <Route path='/update/:id' component={UpdateTodo} />
-      </div>
+      </Switch>
       </Router>
     </div>
   </div>
-,
-  document.getElementById('root')
 );
